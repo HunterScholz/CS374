@@ -1,47 +1,57 @@
 #include <sys/stat.h>
+#include <stdlib.h>
+#include <dirent.h>
 #include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include <string.h>
 
+long directory_size(char* path){
+    DIR *dir = opendir(path);
+    struct dirent *entry;
+    struct stat buf;
+    long total_size = 0;
+    char full_path[1024];
 
-// Get File Size
-int main(int argc, char *args[]){
-
-    if (argc < 2) {
-        // ERROR if there are too many arguments
-        perror("too many arguments");
-        return 1;  // Exit with error code 1
+    if (dir == NULL){
+        perror("opendir");
+        return -1;
     }
 
-    for(int i = 1; i < argc; i++){
-        struct stat buf;
-        stat(args[i], &buf);
+    while ((entry = readdir(dir)) != NULL){ 
+        //Ignore current and parent directories
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {continue;}
 
-        printf("%s: %d\n", args[i], buf.st_size); 
+        // Get full path
+        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+
+        if (stat(full_path, &buf) == -1){
+            perror("stat");
+            continue;
+        }
+
+        // Recurse if directory
+        if (S_ISDIR(buf.st_mode)){
+            total_size += directory_size(full_path);
+        } else {
+            total_size += buf.st_size;
+        }
     }
-    
+
+    printf("%s: %ld\n", path, total_size);
+    closedir(dir);
+    return total_size;
 }
 
-// Open and Read File
-int main(void)
+void usage()
 {
-    // Integer to hold the file descriptior
-    int fd;
-    fd = open("foo.txt", 0600);
+    fprintf(stderr, "usage: ./filescanner dir\n");
+    exit(1);
+}
 
-    if (fd == -1) {
-        // If the open fails, print out an error message prepended with
-        // "open"
-        perror("open");
-        return 1;  // Exit with error code 1
-    }
+int main(int argc, char *args[]){
+    if (argc > 2){usage();}
 
-    char buf[128];  // 128-byte buffer
-    int bytes_read = read(fd, buf, 128);
+    // Sets root to current directory if no arguments are given
+    char *root = (argc == 2) ? args[1] : ".";
 
-    // Write to stdout
-    write(1, buf, bytes_read);
-
-    // Close the file when done
-    close(fd);
+    directory_size(root);
 }
