@@ -1,2 +1,3 @@
 This program scans an inputted directory and prints its size in bytes. It cycles through each file in the directory, and adds each file's byte size into a total. When the scanner encounters another directory, it goes through each file within it and prints its total byte size. It does this recursively until the final inputted directory is printed.
+
 <img width="291" height="219" alt="function call diagram drawio" src="https://github.com/user-attachments/assets/713dfed0-59e7-4f8e-9059-286d4bf66315" />
