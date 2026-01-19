@@ -23,7 +23,7 @@ long directory_size(char* path){
         // Get full path
         snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
 
-        if (stat(full_path, &buf) == -1){
+        if (lstat(full_path, &buf) == -1){
             perror("stat");
             continue;
         }
