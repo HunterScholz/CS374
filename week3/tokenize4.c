@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 int main(void)
 {
@@ -7,17 +8,18 @@ int main(void)
     char *token;
     int tnum = 0;
     char line[1024];
+
+    printf("prompt> ");
+    fflush(stdout);
     fgets(line, sizeof line, stdin);
 
     if ((token = strtok(line, " ")) != NULL) do
         tokens[tnum++] = token;
     while ((token = strtok(NULL, " \n")) != NULL);
 
-    for (int i = 0; tokens[i] != NULL; i++)
-        printf("%d: %s\n", i, tokens[i]);
+    execvp(tokens[0], tokens);
 }
 
-
-// The for loop could fail since the array is full of content unrelated to the
-// program. This garbage data could muddy the process, so it should be initialized
-// with only NULL pointers.
+// If I type jibberish into the input or something that isn't a command,
+// nothing happens and the process terminates. To make such an input call
+// and error, you can use perror() around the execvp() call.

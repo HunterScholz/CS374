@@ -13,7 +13,6 @@ int main(void)
     while ((token = strtok(NULL, " \n")) != NULL);
 }
 
-"""
-Instead of using strtok(), we could find the index of the newline character
-and replace it with NULL so that the string terminates.
-"""
+
+// Instead of using strtok(), we could find the index of the newline character
+// and replace it with NULL so that the string terminates.
