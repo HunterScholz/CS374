@@ -12,3 +12,8 @@ int main(void)
         printf("%d: %s\n", tnum++, token);
     while ((token = strtok(NULL, " \n")) != NULL);
 }
+
+"""
+Instead of using strtok(), we could find the index of the newline character
+and replace it with NULL so that the string terminates.
+"""
