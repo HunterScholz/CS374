@@ -8,11 +8,15 @@ void run_command(char *tokens[]){
 
     pid_t pid = fork();
 
-    if (pid == 0){ // Child
+    // Child
+    if (pid == 0){
         execvp(tokens[0], tokens);
         perror("execpv failed");
         exit(1);
-    } else { // Parent
+    } 
+    
+    // Parent
+    else {
         wait(NULL);
     }
 }
@@ -50,10 +54,12 @@ int main(void){
         int tnum = 0;
         char line[2048];
 
+        // Command Line
         printf("mush> ");
         fflush(stdout);
         fgets(line, sizeof line, stdin);
 
+        // Buffer
         if ((token = strtok(line, " \n")) != NULL) do
             tokens[tnum++] = token;
         while ((token = strtok(NULL, " \n")) != NULL);
