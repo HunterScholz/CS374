@@ -1,0 +1,10 @@
+total 37
+drwxrwxrwx 1 hunter hunter   512 Jan 30 11:47 .
+drwxrwxrwx 1 hunter hunter   512 Jan 29 15:15 ..
+-rwxrwxrwx 1 hunter hunter    14 Jan 30 11:25 .gitignore
+-rwxrwxrwx 1 hunter hunter   196 Jan 21 12:56 Makefile
+-rwxrwxrwx 1 hunter hunter     0 Jan 30  2026 foo.txt
+-rwxrwxrwx 1 hunter hunter 16304 Jan 30 11:28 lswc
+-rwxrwxrwx 1 hunter hunter   708 Jan 30 11:24 lswc.c
+-rwxrwxrwx 1 hunter hunter 16304 Jan 30 11:47 redirout
+-rwxrwxrwx 1 hunter hunter   561 Jan 30 11:47 redirout.c
