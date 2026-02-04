@@ -104,5 +104,5 @@ int main(void)
 }
 
 // When there were no locks in place, the two write processes were both trying to alter
-// the data. Since it was constantly beign overwritten, the data became corrupted and 
+// the data. Since it was constantly being overwritten, the data became corrupted and 
 // became filled with junk.
