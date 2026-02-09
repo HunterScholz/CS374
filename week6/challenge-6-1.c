@@ -29,7 +29,7 @@ int main(void){
         exit(1);
     }
 
-    printf("^C reenabled! Try it!\n");
+    printf("\n^C reenabled! Try it!\n");
     sleep(10);
 
 }
