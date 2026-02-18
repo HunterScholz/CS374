@@ -34,3 +34,7 @@ int main (void){
         }
     }
 }
+
+// The output is incorrect due to race conditions in multiple threads. If multiple threads
+// go over a specific part of the array at the same time, they can overwrite each other so some
+// threads are skipped.
