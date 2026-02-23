@@ -11,9 +11,9 @@ struct Parameters {
 };
 
 struct Outputs {
-    int avg_r;
-    int avg_g;
-    int avg_b;
+    int sum_r;
+    int sum_g;
+    int sum_b;
 };
 
 void *run (void *args){
@@ -22,7 +22,6 @@ void *run (void *args){
 
     int h = params->slice_height;
     int w = ppm->width;
-    int n_pixels = w * h;
 
     int r_sum = 0;
     int g_sum = 0;
@@ -58,9 +57,9 @@ void *run (void *args){
         exit(1);
     }
 
-    out->avg_r = r_sum / n_pixels;
-    out->avg_g = g_sum / n_pixels;
-    out->avg_b = b_sum / n_pixels;
+    out->sum_r = r_sum;
+    out->sum_g = g_sum;
+    out->sum_b = b_sum;
 
     // Output
     printf("Thread %d: %d %d\n", params->thread_id, params->start_y, params->slice_height);
@@ -70,14 +69,6 @@ void *run (void *args){
 void usage(void){
     puts("usage: ./grayscaler int in.ppm out.ppm");
     exit(1);
-}
-
-int getMean (int arr[], int n){
-    int sum = 0;
-    for (int i = 0; i < n; i++){
-        sum += arr[i];
-    }
-    return sum / n;
 }
 
 int main (int argc, char *argv[]){
@@ -121,9 +112,9 @@ int main (int argc, char *argv[]){
     }
 
     // Join Threads
-    int avg_reds[n_threads];
-    int avg_greens[n_threads];
-    int avg_blues[n_threads];
+    int total_reds = 0;
+    int total_greens = 0;
+    int total_blues = 0;
 
     for (int i = 0; i < n_threads; i++){
         void* out_ptr;
@@ -132,18 +123,19 @@ int main (int argc, char *argv[]){
         // Handle Outputs
         struct Outputs* out = (struct Outputs*) out_ptr;
 
-        avg_reds[i] = out->avg_r;
-        avg_greens[i] = out->avg_g;
-        avg_blues[i] = out->avg_b;
+        total_reds += out->sum_r;
+        total_greens += out->sum_g;
+        total_blues += out->sum_b;
 
         free(out);
     }
 
     ppm_write(ppm, outfile);
+    int n_pixels = ppm->height * ppm->width;
 
-    printf("Average R: %d\n", getMean(avg_reds, n_threads));
-    printf("Average G: %d\n", getMean(avg_greens, n_threads));
-    printf("Average B: %d\n", getMean(avg_blues, n_threads));
+    printf("Average R: %d\n", total_reds / n_pixels);
+    printf("Average G: %d\n", total_greens / n_pixels);
+    printf("Average B: %d\n", total_blues / n_pixels);
 
     free(params);
     ppm_free(ppm);
