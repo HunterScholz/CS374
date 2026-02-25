@@ -20,11 +20,13 @@ struct node {
 void llist_insert(struct node **head, int value)
 {
     struct node *n = malloc(sizeof *n);
+    pthread_mutex_lock(&lock);
     n->value = value;
     usleep(1); // IGNORE all usleeps! Leave them in place.
     n->next = *head;
     usleep(1);
     *head = n;
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -36,12 +38,14 @@ void llist_delete(struct node **head)
         return;
     }
 
+    pthread_mutex_lock(&lock);
     struct node *n = *head;
     usleep(1);
     struct node *next = (*head)->next;
     usleep(1);
     *head = next;
 
+    pthread_mutex_unlock(&lock);
     free(n);
 }
 
@@ -53,8 +57,11 @@ void llist_append(struct node **head, int value)
     struct node *n = malloc(sizeof *n);
     n->value = value;
     n->next = NULL;
+
+    pthread_mutex_lock(&lock);
     if (*head == NULL) {
         *head = n;
+        pthread_mutex_unlock(&lock);
         return;
     }
 
@@ -67,6 +74,8 @@ void llist_append(struct node **head, int value)
 
     usleep(1);
     p->next = n;
+
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -74,8 +83,10 @@ void llist_append(struct node **head, int value)
  */
 void llist_traverse(struct node *head, void(*f)(struct node *))
 {
+    pthread_mutex_lock(&lock);
     for (struct node *p = head; p != NULL; p = p->next)
         f(p);
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -107,13 +118,9 @@ void *run_append(void *arg)
 {
     struct node **head = arg;
 
-    pthread_mutex_lock(&lock);
-
     for (int i = 0; i < 10; i++) {
         llist_append(head, i);
     }
-
-    pthread_mutex_unlock(&lock);
 
     return NULL;
 }
@@ -125,13 +132,9 @@ void *run_insert(void *arg)
 {
     struct node **head = arg;
 
-    pthread_mutex_lock(&lock);
-
     for (int i = 0; i < 10; i++) {
         llist_insert(head, i);
     }
-
-    pthread_mutex_unlock(&lock);
 
     return NULL;
 }
@@ -143,8 +146,6 @@ void *run_insert_delete(void *arg)
 {
     struct node **head = arg;
 
-    pthread_mutex_lock(&lock);
-
     for (int i = 0; i < 10; i++) {
         llist_insert(head, i);
     }
@@ -152,8 +153,6 @@ void *run_insert_delete(void *arg)
     for (int i = 0; i < 10; i++) {
         llist_delete(head);
     }
-
-    pthread_mutex_unlock(&lock);
 
     return NULL;
 }
