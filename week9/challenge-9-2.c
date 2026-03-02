@@ -62,3 +62,7 @@ int main(void){
     pthread_join(t1, NULL);
     pthread_join(t2, NULL);
 }
+
+// If you use pthread_con_signal instead of the broadcast, a random thread is selected. With multiple threads,
+// A thread with a condition that has been met could potentially not be called, causing that thread not to
+// wake up and run when it should.
